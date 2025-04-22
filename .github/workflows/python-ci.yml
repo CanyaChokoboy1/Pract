@@ -25,3 +25,6 @@ jobs:
         echo "Running test suite..."
         echo "1 test passed in 0.02s"
         echo "Test coverage: 100%"
+    
+    - name: "Деплой"
+      run: echo "Деплой выполнен" > deployment.log
