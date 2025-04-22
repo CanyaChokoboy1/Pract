@@ -1,30 +1,46 @@
 name: CI/CD Pipeline
 
-on:
-  push:
-    branches: [main]
+on: [push]
 
 jobs:
-  build:
+  lint-and-test:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Setup Python
-      uses: actions/setup-python@v4
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
       with:
         python-version: '3.10'
-
+    
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
-
-    - name: Run flake8 linter
+        pip install black flake8 pytest
+    
+    - name: Run code formatting check with Black
+      run: |
+        black --check .
+    
+    - name: Run linting with Flake8
       run: |
         flake8 .
-
+    
     - name: Run tests
       run: |
-        python -m unittest discover
+        python -m pytest
+    
+  deploy:
+    needs: lint-and-test
+    if: success()
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Deploy to GitHub Pages
+      run: |
+        echo "Deployment would happen here"
+        # Здесь могут быть команды для реального деплоя
